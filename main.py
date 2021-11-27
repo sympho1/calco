@@ -54,8 +54,10 @@ class MainWidget(BoxLayout):
                 child.text = "c"
 
 
-
 class Calculator(App):
+
+    def advanced_function(self, *args):
+        pass
 
     def supprim(self, wid, *args):
         l = list(wid.text)
