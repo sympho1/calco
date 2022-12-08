@@ -9,8 +9,8 @@ import re
 
 
 class Clav(TouchRippleButtonBehavior, Label):
-    def __init__(self, *args, **kwargs):
-        super(Clav, self).__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super(Clav, self).__init__(**kwargs)
         self.font_size = sp(48)
         self.markup = True
 
@@ -70,9 +70,10 @@ class Calculator(App):
     def build(self):
         return MainWidget()
 
+
 if __name__ == "__main__":
-    from kivy.config import  Config
+    from kivy.config import Config
     Config.set("graphics", "width", 380)
-    Config.set("graphics", "height", 650)
+    Config.set("graphics", "height", 750)
 
     Calculator().run()
