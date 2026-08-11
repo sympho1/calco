@@ -22,7 +22,7 @@ class Clav(TouchRippleButtonBehavior, Label):
             
             self.text = "."
         else:
-            wid.text += self.text      
+            wid.text += self.text     
 
 
 class MainWidget(BoxLayout):
@@ -34,18 +34,42 @@ class MainWidget(BoxLayout):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
 
-    # def get_result(self, pattern, *args):
-    #     regex = re.compile(r'(^\d*|\.\d*)\+|-|/|\*(\d*|\.\d*$)')
-    #     if regex.match(pattern):
-    #         self.result_obj.text = str(eval(self.operation_obj.text))
-    #     pass
+    def _validate_expression(self, expression):
+        """Valide que l'expression ne contient que des caractères autorisés"""
+        if not expression:
+            return False
+        # Autorise uniquement les chiffres, opérateurs, parenthèses et points
+        allowed_pattern = r'^[\d+\-*/().\s]+$'
+        return bool(re.match(allowed_pattern, expression))
 
     def click_equal(self, *args):
-        if "x" not in self.operation_obj.text:
-            self.result_obj.text = str(round(eval(self.operation_obj.text), 10))
-        else:
-            self.new_operation_obj = self.operation_obj.text.replace("x", "*")
-            self.result_obj.text = str(round(eval(self.new_operation_obj), 10))
+        try:
+            expression = self.operation_obj.text
+            
+            # Remplacer 'x' par '*' pour la multiplication
+            if "x" in expression:
+                expression = expression.replace("x", "*")
+            
+            # Valider l'expression avant évaluation
+            if not self._validate_expression(expression):
+                self.result_obj.text = "Erreur: Caractères invalides"
+                return
+            
+            # Évaluer l'expression en toute sécurité
+            result = eval(expression)
+            
+            # Arrondir le résultat pour éviter les problèmes de virgule flottante
+            if isinstance(result, float):
+                result = round(result, 10)
+            
+            self.result_obj.text = str(result)
+            
+        except ZeroDivisionError:
+            self.result_obj.text = "Erreur: Division par zéro"
+        except SyntaxError:
+            self.result_obj.text = "Erreur: Expression invalide"
+        except Exception as e:
+            self.result_obj.text = "Erreur"
 
         for child in self.ids.grid.children:
             
